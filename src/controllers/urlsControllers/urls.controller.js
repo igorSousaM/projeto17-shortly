@@ -1,6 +1,6 @@
 import connection from "../../database/index.js";
 
-export async function getUserUrls(req, res) {
+export async function getUrls(req, res) {
   const { id } = req.params;
 
   try {

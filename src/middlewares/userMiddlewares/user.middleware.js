@@ -53,10 +53,10 @@ export async function validateSignIn(req, res, next) {
       'SELECT * FROM session WHERE "userId"=$1;',
       [userFound.rows[0].id]
     );
-    console.log(userIsOn.rows[0])
+    console.log(userIsOn.rows[0]);
 
-    if(userIsOn.rows[0]){
-      return res.status(401).send('voce ja esta online')
+    if (userIsOn.rows[0]) {
+      return res.status(401).send("voce ja esta online");
     }
 
     const passwordCheck = bcrypt.compareSync(
@@ -71,6 +71,28 @@ export async function validateSignIn(req, res, next) {
   } catch (err) {
     console.log(err);
     res.sendStatus(500);
+  }
+
+  next();
+}
+
+export async function validateUser(req, res, next) {
+  const { authorization } = req.headers;
+  const token = authorization?.replace("Bearer ", "");
+
+  if (!token) {
+    return res.status(401).send("não tem token");
+  }
+
+  const session = await connection.query(
+    "SELECT * FROM session WHERE token=$1;",
+    [token]
+  );
+
+    res.locals.id = session.rows[0].userId;
+
+  if (!session.rows[0]) {
+    return res.status(401).send("token errado");
   }
 
   next();

@@ -31,3 +31,17 @@ export async function signIn(req, res) {
     res.sendStatus(500);
   }
 }
+
+export async function getUserUrls(req,res){
+  const id = res.locals.id
+  
+  try{
+    const urlsList = await connection.query('SELECT * FROM "shortenedUrls" WHERE "userId"=$1;',[id])
+
+    res.status(200).send(urlsList.rows)
+  }catch(err){
+    console.log(err)
+    res.status(500).send(err)
+  }
+
+}
