@@ -84,16 +84,21 @@ export async function validateUser(req, res, next) {
     return res.status(401).send("não tem token");
   }
 
-  const session = await connection.query(
-    "SELECT * FROM session WHERE token=$1;",
-    [token]
-  );
+  try {
+    const session = await connection.query(
+      "SELECT * FROM session WHERE token=$1;",
+      [token]
+    );
 
-    res.locals.id = session.rows[0].userId;
-
-  if (!session.rows[0]) {
-    return res.status(401).send("token errado");
+    if (!session.rows[0]) {
+      return res.status(401).send("token invalido");
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err);
   }
+
+  res.locals.id = session.rows[0].userId;
 
   next();
 }
