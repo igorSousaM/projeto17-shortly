@@ -47,4 +47,22 @@ export async function deleteUrl(req, res) {
   }
 }
 
-export async function shortUrl(req,res){}
+export async function shorterUrl(req, res) {
+  const { url, userId } = res.locals.body;
+  
+  //criar o gerador de shortLinks
+  const shortUrl = "abcd";
+
+  try {
+    await connection.query(
+      'INSERT INTO "shortenedUrls" (url, "shortUrl", "userId") VALUES ($1,$2,$3);',
+      [url, shortUrl, userId]
+    );
+
+
+    res.send("deu bom").status(shortUrl);
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
+}
